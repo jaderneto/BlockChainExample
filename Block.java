@@ -64,6 +64,46 @@ public class Block {
 		return true;	
 	}
 	
+	public static void electionResult() {
+		Block bloco;
+		int joao = 0;
+		int maria = 0;
+		int jose = 0;
+		if(isChainValid()) {
+			for(int i=0; i < blockchain.size(); i++) {
+				bloco = blockchain.get(i);
+				if (bloco.data == "JOAO") {
+					joao++;
+				}
+				if (bloco.data == "JOSE") {
+					jose++;
+				}
+				if (bloco.data == "MARIA") {
+					maria++;
+				}
+			}
+			
+			System.out.println("--- RESULTADO ELEIÇÃO ---");
+			System.out.println("MARIA: " + maria);
+			System.out.println("JOÃO: " + joao);
+			System.out.println("JOSÉ: " + jose);
+			
+			if(maria > jose && maria > joao) {
+				System.out.println("MARIA VENCEU A ELEIÇÃO!!!");
+			}
+			if(jose > maria && jose > joao) {
+				System.out.println("JOSÉ VENCEU A ELEIÇÃO!!!");
+			}
+			if(joao > jose && joao > maria) {
+				System.out.println("JOÃO VENCEU A ELEIÇÃO!!!");
+			}
+			
+			if(joao == jose && jose == maria) {
+				System.out.println("ELEIÇÃO EMPATADA!!!!");
+			}
+		}
+	}
+	
 	public void mineBlock(int difficulty) {
 		String target = new String(new char[difficulty]).replace('\0', '0'); //Cria uma string com dificulda * '0' (example: "000")
 		while(!hash.substring(0,difficulty).equals(target)) {
@@ -77,23 +117,29 @@ public class Block {
 	public static void main(String[] args) {
 		
 		//Adicionando novos blocos a blockchain
-		blockchain.add(new Block("VOTO: JOAO", "0"));
+		blockchain.add(new Block("JOAO", "0"));
 		System.out.println("Tentando minerar o bloco 1 ...");
 		blockchain.get(0).mineBlock(difficulty);
 		
-		blockchain.add(new Block("VOTO: JOSE", blockchain.get(blockchain.size()-1).hash));
+		blockchain.add(new Block("JOSE", blockchain.get(blockchain.size()-1).hash));
 		System.out.println("Tentando minerar o bloco 2 ...");
 		blockchain.get(1).mineBlock(difficulty);
 		
-		blockchain.add(new Block("VOTO: MARIA", blockchain.get(blockchain.size()-1).hash));
+		blockchain.add(new Block("MARIA", blockchain.get(blockchain.size()-1).hash));
 		System.out.println("Tentando minerar o bloco 3 ...");
 		blockchain.get(2).mineBlock(difficulty);
+		
+		blockchain.add(new Block("JOSE", blockchain.get(blockchain.size()-1).hash));
+		System.out.println("Tentando minerar o bloco 4 ...");
+		blockchain.get(3).mineBlock(difficulty);
 		
 		System.out.println("\nBlockchain é valida? : " + isChainValid());
 		
 		String blockchainJson = new GsonBuilder().setPrettyPrinting().create().toJson(blockchain);
 		System.out.println("\n------BLOCKCHAIN-------");
 		System.out.println(blockchainJson);
+		
+		electionResult();
 		
 	}
 	
